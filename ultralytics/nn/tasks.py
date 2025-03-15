@@ -58,7 +58,8 @@ from ultralytics.nn.modules import (
     WorldDetect,
     v10Detect,
     CARAFE,
-    MetaGamma,
+    GCModule,
+    SAGamma,
     SimpleStem,
     VisionClueMerge,
     VSSBlock,
@@ -1053,7 +1054,7 @@ def parse_model(d, ch, verbose=True):  # model_dict, input_channels(3)
         elif m is CARAFE:
             c2 = ch[f]
             args = [c2, *args]
-        elif m is MetaGamma:
+        elif m is GCModule:
             c2 = ch[f]
             args = [c2, *args]
         else:
