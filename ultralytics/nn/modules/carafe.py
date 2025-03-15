@@ -7,30 +7,28 @@ from .conv import Conv
 
 class SAGamma(nn.Module):
     def __init__(self, G_min=0.8, G_max=1.2, epsilon=1e-6):
-        """ Self-Adaptive Gamma Correction Module.
-        Args:
-            G_min: Minimum gamma value.
-            G_max: Maximum gamma value.
-            epsilon: Small constant to prevent division by zero.
-        """
         super(SAGamma, self).__init__()
         self.G_min = G_min
         self.G_max = G_max
         self.epsilon = epsilon
 
     def forward(self, x):
-        # Convert to grayscale: gray = 0.299 * R + 0.587 * G + 0.114 * B
+        # 确保输入无 NaN
+        # 计算灰度图
         gray = 0.299 * x[:, 0, :, :] + 0.587 * x[:, 1, :, :] + 0.114 * x[:, 2, :, :]
-        gray_mean = torch.mean(gray, dim=[1, 2], keepdim=True)  # Batch-wise mean
-        gray_std = torch.std(gray, dim=[1, 2], keepdim=True)  # Batch-wise std
+        gray_mean = torch.mean(gray, dim=[1, 2], keepdim=True)
+        gray_std = torch.std(gray, dim=[1, 2], keepdim=True).clamp_min(self.epsilon)  # 避免除零
 
-        # Compute adaptive gamma
-        gamma = self.G_min + (self.G_max - self.G_min) * gray_mean / (gray_mean + gray_std.clamp_min(self.epsilon))
-        gamma = gamma.clamp(self.G_min, self.G_max)
-        # print(gamma)
-        # Apply gamma correction
-        x = torch.pow(x + self.epsilon, gamma.unsqueeze(1))  # Apply per-channel
+        # 计算 Gamma，避免 NaN
+        gamma = self.G_min + (self.G_max - self.G_min) * gray_mean / (gray_mean + gray_std)
+        gamma = torch.clamp(gamma, self.G_min, self.G_max)
+        print(gamma)
+        gamma = torch.nan_to_num(gamma, nan=self.G_min)  # 避免 NaN
+
+        # 应用 Gamma 校正
+        x = torch.pow(x + self.epsilon, gamma.unsqueeze(1))  # (B, C, H, W)
         return x
+
 
 
 class CARAFE(nn.Module):
