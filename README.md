@@ -35,12 +35,22 @@ python mbyolo_train.py --task train --amp \
   --batch_size 16
 ```
 
+```shell
+python mbyolo_train.py --task train --amp \
+  --data /home/sijin/datasets/cd5-det/data.yaml \
+  --config ultralytics/cfg/models/v8/mamba-yolo/Mamba-YOLO-GCM.yaml \
+  --project ./output_dir/test/cd5-det \
+  --name mambayolo_n \
+  --epoch 100 \
+  --batch_size 8
+```
+
 4. TASKS
 
 * yolov8+mambaB+carafe, container-damage-detection
 ```shell
 python mbyolo_train.py --task train --amp \
-  --data /workspace/container/data.yaml \
+  --data /home/sijin/datasets/cd5-det/data.yaml \
   --config ultralytics/cfg/models/v8/mamba-yolo/Mamba-YOLO-B-carafe.yaml \
   --project ./output_dir/test/mbyolo_coco8_test \
   --name mambayolo_cdt \

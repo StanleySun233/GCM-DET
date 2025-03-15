@@ -27,7 +27,7 @@ class SAGamma(nn.Module):
         # Compute adaptive gamma
         gamma = self.G_min + (self.G_max - self.G_min) * gray_mean / (gray_mean + gray_std + self.epsilon)
         gamma = gamma.clamp(self.G_min, self.G_max)
-
+        print(gamma)
         # Apply gamma correction
         x = torch.pow(x + self.epsilon, gamma.unsqueeze(1))  # Apply per-channel
         return x
