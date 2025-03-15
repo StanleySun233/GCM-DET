@@ -19,11 +19,11 @@ backbone:
 
 # Mamba-YOLO PAFPN
 head:
-  - [-1, 1, CARAFE, [1, 5]]
+  - [-1, 1, GCModule, [1, 5]]
   - [[-1, 5], 1, Concat, [1]]  # cat backbone P4
   - [-1, 3, XSSBlock, [512]]  # 11
 
-  - [-1, 1, CARAFE, [1, 7]]
+  - [-1, 1, GCModule, [1, 7]]
   - [[-1, 3], 1, Concat, [1]]  # cat backbone P3
   - [-1, 3, XSSBlock, [256]]  # 14 (P3/8-small)
 
